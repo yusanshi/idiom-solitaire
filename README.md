@@ -1,21 +1,97 @@
 # 成语接龙
 
+
 > [Hackgame 2019](https://hack.lug.ustc.edu.cn)（中国科学技术大学第六届信息安全大赛）成语接龙题解（暴力算法）。《图论》学得不太好，没想到更好的算法，只能弄出来这么个暴力算法，供参考。
+
+<!-- TOC -->
+
+- [成语接龙](#成语接龙)
+    - [运行](#运行)
+        - [比赛](#比赛)
+        - [非比赛](#非比赛)
+    - [思路](#思路)
+        - [有向图](#有向图)
+        - [`KN`和`SN`集合](#kn和sn集合)
+    - [关于本题](#关于本题)
+
+<!-- /TOC -->
+
 
 ## 运行
 
-### [比赛](#关于比赛)
+### 比赛
 1. `pip3 install networkx matplotlib "python-socketio[client]"`；
-
 2. `vim config.py`，根据自己的机器修改`WORKER_NUM`的值，它表示运算`S1`,`K2`,`S2`集合（这些集合的定义见下文）时同时使用的进程数，设置计算哪些集合（最好全部为`True`即全部计算，若性能有限，可以不计算`K2`），填入自己的`Token`；
-
 3. `python3 main.py`。
 
 
+示例如下：
+
 ```
+# WORKER_NUM = 16
+# CAPACITY = [True, True, True, True, True, True]
+
+> python3 main.py
 
 
+####### omitted #######
 
+
+Server:  {'data': '乖僻邪谬'}
+Round count 27
+Success count 2.
+k0 []
+s0 ['sheng', 'yu', 'kai', 'li', 'chuan']
+k1 []
+s1 ['kai', 'sheng', 'chuan', 'li', 'yu']
+k2 []
+s2 ['kai']
+k0_list []
+k1_list_real []
+k2_list_real []
+Me      : 谬想天开
+
+Server:  {'data': '开口见心'}
+Round count 28
+Success count 2.
+k0 []
+s0 ['de', 'yong', 'zhu', 'yan', 'duan', 'que', 'ruan', 'da', 'fu', 'di', 'lie', 'mi', 'yao', 'zhi', 'ju', 'luan', 'rong', 'sheng', 'huan', 'jiao', 'yuan', 'qie', 'pan', 'luo', 'zhan', 'fa'$ 'lan', 'liao', 'fen', 'chuan', 'ying', 'yu', 'hen', 'qiao', 'hui', 'ma', 'zu', 'zhui', 'shi', 'ding', 'he', 'jing', 'shui', 'hu', 'zheng', 'zhua', 'kuang', 'kuai', 'shu', 'xie', 'xing', '$r', 'qiang', 'bing', 'you', 'ao', 'du', 'la', 'fang', 'tai', 'ce', 'te', 'bai', 'leng', 'zhuan', 'chan', 'han', 'mu', 'xia', 'ning', 'zhuang', 'lu', 'chi', 'ai', 'min', 'nian', 'yin', 'cha$', 'nao', 'rou', 'xiu', 'chu', 'po', 'xuan', 'geng', 'ben', 'jia', 'xin', 'ya', 'gu', 'tiao', 'ye', 'ming', 'tian', 'zhuo', 'rang', 'cui', 'jie', 'gong', 'liang', 'cheng', 'guai', 'liu', '$uo', 'ge', 'jiang', 'dan', 'lai', 'quan', 'mei', 'zhen', 'gao', 'pai', 'xiang', 'sui', 'yang', 'ken', 'cu', 'zao']
+k1 []
+s1 ['rong', 'sheng', 'huan', 'jiao', 'yuan', 'qie', 'pan', 'luo', 'du', 'la', 'fang', 'tai', 'ce', 'te', 'bai', 'leng', 'he', 'jing', 'shui', 'hu', 'zheng', 'zhua', 'kuang', 'kuai', 'zhuan$, 'chan', 'han', 'mu', 'xia', 'ning', 'zhuang', 'lu', 'hen', 'qiao', 'hui', 'ma', 'zu', 'zhui', 'ding', 'fu', 'di', 'lie', 'mi', 'yao', 'ju', 'luan', 'pai', 'xiang', 'sui', 'yang', 'ken', $cu', 'chi', 'ai', 'min', 'nian', 'yin', 'chao', 'nao', 'rou', 'zhan', 'fa', 'lan', 'liao', 'fen', 'chuan', 'ying', 'yu', 'cui', 'jie', 'gong', 'liang', 'cheng', 'guai', 'cuo', 'xiu', 'chu'$ 'po', 'xuan', 'geng', 'ben', 'jia', 'xin', 'de', 'yong', 'yan', 'duan', 'que', 'ruan', 'da', 'ge', 'jiang', 'dan', 'lai', 'quan', 'mei', 'zhen', 'gao', 'ya', 'gu', 'tiao', 'ye', 'tian', '$huo', 'rang', 'shu', 'xie', 'xing', 'er', 'qiang', 'bing', 'you', 'ao']
+k2 []
+s2 ['ruan']
+k0_list []
+k1_list_real []
+k2_list_real []
+Me      : 心慈手软
+
+
+####### omitted #######
+
+
+Server:  {'data': '佩紫怀黄'}
+Round count 120
+Success count 3.
+k0 ['fou']
+s0 ['jing', 'chi', 'lu', 'tuan', 'shui', 'ri', 'shu', 'bei', 'sou', 'fu', 'lv', 'jie', 'fan', 'zi', 'meng', 'an', 'shi', 'nong', 'bing', 'mei', 'lun', 'yue', 'yan', 'du', 'zhang', 'tu', 'ti
+ao', 'zhao', 'qing', 'dai', 'jian', 'xiang', 'deng', 'yin', 'tong', 'ni', 'ti', 'gai', 'hou', 'gua', 'dian', 'shou', 'run', 'xia', 'chan', 'huan', 'fou']
+k1 ['fou']
+s1 ['tuan', 'shui', 'ri', 'mei', 'lun', 'an', 'nong', 'jing', 'chi', 'lu', 'shu', 'bei', 'sou', 'fan', 'zi', 'meng', 'zhao', 'dai', 'huan', 'fou', 'zhang', 'tu', 'tiao', 'fu', 'lv', 'run',
+'xia', 'chan', 'xiang', 'deng', 'ti', 'gai', 'hou', 'yin', 'tong', 'ni', 'gua', 'dian', 'shou', 'yan', 'du']
+k2 ['fou']
+s2 ['tuan']
+k0_list ['fou']
+k1_list_real ['fou']
+k2_list_real ['fou']
+Me      : 黄锺瓦缶
+
+Server:
+Server:  {'data': '成功领取红包! 你已收集 flag 碎片 4/4'}
+ {'data': '恭喜你, 你成功获得 flag 红包奖励~'}
+Success count 4.
+
+Server:  {'data': 'flag{True_Virtuoso_of_Chinese_Idioms_b46b56ccdb}'}
+Found flag, exit!
 ```
 
 ### 非比赛
@@ -26,12 +102,14 @@
 4. `python3 play.py`，输入初始的成语（必须要在`idiom.json`库中），若有选择`manual`模式，需要在每次提示当前可选成语时手动输入其中的一个成语。
 
 
+示例如下：
+
 ```
 # play(('Me', 'smart'), ('Robot', 'random'))
 # WORKER_NUM = 4
 # CAPACITY = [True, True, True, True, False, False]
 
-
+> python3 play.py
 Initial idiom: 废理兴工
 Round 1
 k0 []
@@ -60,9 +138,7 @@ Me      : 当局者迷
 Robot   : 靡衣玉食
 
 
-
-####### skipped #######
-
+####### omitted #######
 
 
 Round 8
@@ -83,11 +159,11 @@ Robot Lost!
 
 ### 有向图
 
-所用的所有成语在`idiom.json`中，每个成语有`first`和`last`属性，表示成语开头和结尾的拼音。建立一个有向图（因为不能排除有环，所以不是 DAG），将所有出现的拼音作为结点，所有成语作为有向边，从成语的`first`对应的结点指向`last`对应的结点。由于不同的成语可能有相同的`first`和`last`（如成语库中的`弃短就长`和`弃短用长`），所以两个节点之间可以有多条有向边。
+所用的所有成语在`idiom.json`中，每个成语有`first`和`last`属性，表示成语开头和结尾的拼音。建立一个有向图（因为不能排除有环，所以不是 DAG），将出现的所有开头和结尾的拼音作为结点，所有成语作为有向边，从成语的`first`对应的结点指向`last`对应的结点。由于不同的成语可能有相同的`first`和`last`（如成语库中的`弃短就长`和`弃短用长`），所以两个节点之间可以有多条有向边。
 
 定义`current`变量为当前玩家要接的词的词尾拼音。服务器发来的第一个成语总是`废理兴工`，所以我们关注`gong`这个结点，并把`current`变量定义为它，我们找以它为起点的有向边（我们找到了`工力悉敌`, `弓调马服`等），如果我们要选择接`工力悉敌`，那么`current`变为`di`，服务器接，发来一个新成语，我们再取新成语的词尾拼音赋给`current`......
 
-可以看到，玩成语接龙的最核心的部分就是根据对手发来的成语的词尾拼音（即`current`）的值确定我们要选哪一个拼音作为新的`current`的值，然后任意取从旧`current`结点到新`current`结点的一条边所对应的成语即可。脚本中`Player`类的`choose(self, graph, current)`方法就是做这件事。
+可以看到，玩成语接龙的最核心的部分就是根据对手发来的成语的词尾拼音（即`current`的值）确定我们要选哪一个拼音作为新的`current`的值，然后任意取从旧`current`结点到新`current`结点的一条边所对应的成语即可。脚本中`Player`类的`choose(self, graph, current)`方法就是做这件事。
 
 `choose()`方法有三种运行模式：`manual`, `random`, `smart`，分别表示提示可选成语并让你手动选择、从可选成语里面随机选择、使用暴力算法获得较优选择，最后一种模式就是在和服务器比赛时所用的模式，也是脚本的核心。
 
@@ -97,7 +173,7 @@ Robot Lost!
 
 先做约定：服务器发来一个词后，我们的选择和紧接着服务器的选择是当前回合。
 
-回顾上文，我们在接服务器发来的`废理兴工`时，如果发现有两个选择：`工力悉敌`, `弓调马服`，即当前`current = gong`下我们有两个选择`current = di`, `current = fu`，而如果我们发现结点`di`的 outdegree（出度，即从该节点出射的边数）为 0，那么就意味着我们如果选了`di`作为`current`，那么服务器就没有成语可接。于是，我们把`di`放入`K0`集合，`K`表示`Kill`，`0`表示能在接下来零回合（即当前回合）杀死对方。
+回顾上文，我们在接服务器发来的`废理兴工`时，如果发现有两个选择：`工力悉敌`, `弓调马服`，即当前`current`为` gong`下新`current`的值有 `di`和`fu`两个选择，而如果我们发现结点`di`的 outdegree（出度，即从该节点出射的边数）为 0，那么就意味着我们如果选了`di`作为`current`，那么服务器就没有成语可接。于是，我们把`di`放入`K0`集合，`K`表示`Kill`，`0`表示能在接下来零回合（即当前回合）杀死对方。
 
 如果我们发现没有这样的可以当前回合就杀死对方的拼音，既然杀不死，我们就要想怎么防止被对方杀死，这个时候我们在当前所有可选结点里面找，如果其中一个结点`x`满足：不管对方选择`x`的哪一个后继，那个后继的 outdegree 都不为 0，即只要我们选了`x`，不管对方选了什么，我们都不会死。于是，我们把结点`x`放入`S0`集合，`S`表示`Safe`，`0`表示在接下来零回合内（即当前回合）一定安全。
 

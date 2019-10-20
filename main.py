@@ -59,7 +59,7 @@ def reply(data):
         else:
             if wait_graph_to_update:
                 sio.sleep(3)
-            print('Round count {}'.format(round_count))
+            print('Round count {}.'.format(round_count))
             print('Success count {}.'.format(success_count))
             round_count += 1
             current = idiom_data[idiom]['last']

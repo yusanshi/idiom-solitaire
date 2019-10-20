@@ -34,6 +34,7 @@ def multiprocess_calc(current, graph, calc_set_all, worker_type, worker_level, o
     for _ in range(WORKER_NUM):
         result += done_queue.get()
         if one_only and len(result) != 0:
+            # BUG, see comments in `play.py` to get detail
             for p in all_process:
                 p.terminate()
                 p.join()

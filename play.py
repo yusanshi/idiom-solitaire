@@ -2,7 +2,6 @@ import json
 import networkx as nx
 import random
 import matplotlib.pyplot as plt
-from ast import literal_eval
 from strategy import kill, kill_worker, safe, safe_worker
 from multiprocessing import freeze_support
 from parallel import multiprocess_calc
@@ -11,8 +10,10 @@ from config import CAPACITY
 
 class MyGraph(nx.MultiDiGraph):
     def __init__(self, data):
-        # initiate a digraph based on idiom dict
-        # where each node is a pinyin string
+        '''
+        initiate a digraph based on idiom dict
+        where each node is a pinyin string
+        '''
         super().__init__()
         for idiom in data:
             self.add_edge(data[idiom]['first'],
@@ -20,10 +21,12 @@ class MyGraph(nx.MultiDiGraph):
                           key=idiom)
 
     def get_outing_edge(self, node):
-        # node is a pinyin string
-        # return all outing edges
-        # example: if node is 'di',
-        # then return {'yi':['低回不已'], 'yan':['低眉顺眼'], ...}
+        '''
+        node is a pinyin string
+        return all outing edges
+        example: if node is 'di',
+        then return {'yi':['低回不已'], 'yan':['低眉顺眼'], ...}
+        '''
         result = {}
         for x in self.successors(node):
             result[x] = list(self.adj[node][x])
@@ -43,8 +46,10 @@ class Player():
         self.mode = mode  # 'manual', 'random', 'smart'
 
     def emit(self, current, graph):
-        # give a new pinyin string according to graph and 'current' pinyin
-        # then make the edge in graph unavaiable (remove the edge)
+        '''
+        give a new pinyin string according to graph and 'current' pinyin
+        then make the edge in graph unavaiable (remove the edge)
+        '''
         target_pinyin, idiom = self.choose(graph, current)
         graph.remove_edge(current, target_pinyin, key=idiom)
         print('{}\t: {}'.format(self.name, idiom))
@@ -112,6 +117,23 @@ class Player():
 
             # k0, s0, k1 do not use multiprocessing
             # while s1, k2, s2 use it
+
+            # TODO
+            # BUG in multiprocessing
+            # May possibly cause wrong result when calculating Kn and Sn list using multiprocessing.
+            # Since graph is shared between all process, modification made by one process may influence
+            # other processes.
+            #
+            # In additin, in function multiprocess_calc(), terminating other processes when one of them
+            # already get a desirable result may contribute to a circumstance where a process has
+            # remove an edge but was killed before adding such edge.
+            # I realized this when my result of s2_list is incorrect
+            # (my s2_list is not null but I lost the game just the next round)
+            # Since this bug occurs rarely and I'm busy on my homework I just leave it as it is.
+            #
+            # How to solve? Passing the copy of graph instead of graph's inference?
+            # (I think passing graph to a function is to pass it's inference which could
+            # cause a changed graph, maybe I'm wrong.)
 
             if CAPACITY[3]:
                 s1_list += multiprocess_calc(current,
