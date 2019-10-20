@@ -5,7 +5,7 @@
 ## 运行
 
 ### [比赛](#关于比赛)
-1. `pip3 install networkx matplotlib socketio "python-socketio[client]"`；
+1. `pip3 install networkx matplotlib "python-socketio[client]"`；
 
 2. `vim config.py`，根据自己的机器修改`WORKER_NUM`的值，它表示运算`S1`,`K2`,`S2`集合（这些集合的定义见下文）时同时使用的进程数，设置计算哪些集合（最好全部为`True`即全部计算，若性能有限，可以不计算`K2`），填入自己的`Token`；
 
@@ -20,7 +20,7 @@
 
 ### 非比赛
 
-1. `pip3 install networkx matplotlib socketio "python-socketio[client]"`；
+1. `pip3 install networkx matplotlib "python-socketio[client]"`；
 2. `vim config.py`，根据自己的机器修改`WORKER_NUM`的值，它表示运算`S1`,`K2`,`S2`集合（集合的介绍见下）时同时使用的进程数，设置计算哪些集合（`K2`和`S2`计算较费时，可将其设为`False`），忽略`Token`值；
 3. `vim play.py`，在最底部一行设置玩家信息，默认值为`play(('Me', 'smart'), ('Robot', 'random'))`，表示名字为`Me`的玩家的运行模式是`smart`，名字为`Robot`的玩家的运行模式是`random`（模式的介绍见下）；
 4. `python3 play.py`，输入初始的成语（必须要在`idiom.json`库中），若有选择`manual`模式，需要在每次提示当前可选成语时手动输入其中的一个成语。
