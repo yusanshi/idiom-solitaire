@@ -150,13 +150,7 @@ class Player():
                                              graph, s1_list, safe_worker, 2, one_only=True)
                 print('s2', s2_list)
 
-            k1_list_real = [x for x in s0_list if x in k1_list]
-            k2_list_real = [x for x in s1_list if x in k2_list]
-            print('k0_list', k0_list)
-            print('k1_list_real', k1_list_real)
-            print('k2_list_real', k2_list_real)
-            final_list = k0_list + k1_list_real + k2_list_real + \
-                s2_list + s1_list + s0_list + all_list
+            final_list = k0_list + k1_list + k2_list + s2_list + s1_list + s0_list + all_list
             target_pinyin = final_list[0]
             idiom = outing_edge[target_pinyin][0]
             return target_pinyin, idiom
